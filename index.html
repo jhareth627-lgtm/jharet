@@ -1,0 +1,559 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesoro Nutricional de Satipo</title>
+
+<style>
+:root {
+  --green: #075b37;
+  --lime: #b8ff69;
+  --cream: #fffbea;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  background: linear-gradient(135deg, #063c2b, #087344, #315d12);
+  text-align: center;
+}
+
+header {
+  padding: 22px 14px 8px;
+}
+
+h1 {
+  color: #ffe36b;
+  font-size: 2.5rem;
+  text-shadow: 0 3px 0 #174b2d;
+}
+
+.subtitle {
+  color: #eaffdf;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px;
+}
+
+.stat {
+  background: #064d32;
+  border: 2px solid var(--lime);
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-weight: bold;
+}
+
+main {
+  width: min(680px, 95%);
+  margin: auto;
+  background: var(--cream);
+  color: #075638;
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 16px 35px #002a1c80;
+}
+
+.progress {
+  height: 12px;
+  background: #d7e9d8;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+#bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #3bc77b, #c4ee45);
+  transition: width .4s;
+}
+
+.challenge {
+  color: #087143;
+  font-size: 1.25rem;
+}
+
+.scene {
+  height: 190px;
+  border: 3px solid #a9f1c4;
+  border-radius: 17px;
+  background: linear-gradient(#d8f8ff, #f5ffe6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.scene .emoji {
+  font-size: 6rem;
+  animation: float 2.7s ease-in-out infinite;
+}
+
+.scene .emoji:nth-child(2) {
+  font-size: 2.8rem;
+  position: absolute;
+  right: 13%;
+  top: 17%;
+  animation-delay: .5s;
+}
+
+.scene .emoji:nth-child(3) {
+  font-size: 2.4rem;
+  position: absolute;
+  left: 12%;
+  bottom: 14%;
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-13px) rotate(4deg);
+  }
+}
+
+.question {
+  font-size: 1.13rem;
+  line-height: 1.45;
+  margin: 12px 0 18px;
+  font-weight: bold;
+}
+
+.answers {
+  display: grid;
+  gap: 10px;
+}
+
+.answer {
+  width: 100%;
+  padding: 13px;
+  border: 2px solid #65e99a;
+  border-radius: 12px;
+  background: #e0ffeb;
+  color: #075638;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.answer:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #c4f8d5;
+}
+
+.answer:disabled {
+  cursor: default;
+}
+
+.answer.correct {
+  background: #baf5c8;
+  border-color: #159447;
+}
+
+.answer.wrong {
+  background: #ffd5d5;
+  border-color: #dc4545;
+}
+
+.feedback {
+  min-height: 28px;
+  font-weight: bold;
+  margin: 13px 0;
+}
+
+.action {
+  display: block;
+  margin: 12px auto;
+  background: #087143;
+  color: white;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.action:hover {
+  background: #064e31;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#start, #end {
+  text-align: center;
+  padding: 18px 4px;
+}
+
+#start h2, #end h2 {
+  color: #087143;
+}
+
+.big {
+  font-size: 4rem;
+  animation: float 2.5s infinite;
+}
+
+.challenge-box {
+  background: #fff4c7;
+  border: 2px dashed #e6b93f;
+  border-radius: 13px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+footer {
+  padding: 24px 15px;
+  color: #f1ffe8;
+}
+
+@media(max-width:480px) {
+  main {
+    padding: 16px;
+  }
+  .scene {
+    height: 155px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🌿 Tesoro Nutricional de Satipo 🌿</h1>
+  <p class="subtitle">
+    ¡Explora, supera retos y descubre el poder de una buena alimentación!
+  </p>
+
+  <div class="stats">
+    <div class="stat">⭐ Puntos: <span id="points">0</span></div>
+    <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
+    <div class="stat">🎯 Pregunta: <span id="number">0/5</span></div>
+  </div>
+</header>
+
+<main>
+
+<section id="start">
+  <div class="big">🦜🌴</div>
+  <h2>¡Bienvenido a la aventura!</h2>
+  <p>
+    Recorre la selva de Satipo, responde preguntas
+    de nutrición y cumple desafíos para reunir el tesoro saludable.
+  </p>
+
+  <div class="challenge-box">
+    🏆 <b>Tu misión:</b> consigue la mayor cantidad de puntos.
+    Tienes 3 vidas.
+  </div>
+
+  <button class="action" onclick="startGame()">
+    COMENZAR JUEGO
+  </button>
+</section>
+
+<section id="game" class="hidden">
+
+  <div class="progress">
+    <div id="bar"></div>
+  </div>
+
+  <h2 class="challenge" id="challenge">✨ DESAFÍO 1</h2>
+
+  <div class="scene">
+    <span class="emoji" id="sceneMain">🦜</span>
+    <span class="emoji" id="sceneSide1">🌺</span>
+    <span class="emoji" id="sceneSide2">🦋</span>
+  </div>
+
+  <div class="question" id="question"></div>
+
+  <div class="answers" id="answers"></div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div id="miniChallenge" class="challenge-box hidden"></div>
+
+  <button id="next" class="action hidden" onclick="nextQuestion()">
+    SIGUIENTE ➜
+  </button>
+
+</section>
+
+<section id="end" class="hidden">
+
+  <div class="big" id="endIcon">🏆</div>
+
+  <h2 id="endTitle">¡Aventura completada!</h2>
+
+  <p id="endText"></p>
+
+  <button class="action" onclick="startGame()">
+    JUGAR OTRA VEZ
+  </button>
+
+</section>
+
+</main>
+
+<footer>
+  🌱 Proyecto educativo:
+  <b>Tesoro Nutricional de Satipo</b>
+  <br>
+  ¡Una buena alimentación hoy, un mejor mañana!
+</footer>
+
+<script>
+
+const questions = [
+
+{
+q: "¿Qué vitamina ayuda al cuerpo a formar colágeno y favorece la absorción del hierro de origen vegetal?",
+a: ["Vitamina A", "Vitamina C", "Vitamina D", "Vitamina K"],
+correct: 1,
+why: "La vitamina C participa en la formación de colágeno y mejora la absorción del hierro vegetal.",
+challenge: "Reto: menciona mentalmente una fruta o verdura que aporte vitamina C.",
+art: ["🦜", "🌺", "🦋"]
+},
+
+{
+q: "¿Cuál de estas opciones forma un desayuno más equilibrado?",
+a: ["Gaseosa y galletas", "Solo una golosina", "Avena, fruta y huevo", "Papas fritas y refresco"],
+correct: 2,
+why: "Combinar cereal, fruta y una fuente de proteína aporta distintos nutrientes y energía.",
+challenge: "Reto: identifica cuál de los alimentos del desayuno aporta proteína: el huevo.",
+art: ["🐒", "🌴", "☀️"]
+},
+
+{
+q: "¿Por qué es importante consumir agua durante el día?",
+a: ["Porque reemplaza todas las comidas", "Porque ayuda a regular la temperatura y transportar sustancias", "Porque aporta muchas proteínas", "Porque evita necesitar frutas"],
+correct: 1,
+why: "El agua ayuda a regular la temperatura corporal y transportar nutrientes.",
+challenge: "Reto: recuerda llevar agua segura cuando realices actividad física.",
+art: ["🐸", "🍃", "🌈"]
+},
+
+{
+q: "El cacao de Satipo puede formar parte de una alimentación saludable. ¿Qué conviene revisar al elegir chocolate?",
+a: ["Que tenga mucho azúcar", "Que el envase sea grande", "La cantidad de azúcar y el porcentaje de cacao", "Que tenga más colorantes"],
+correct: 2,
+why: "Conviene revisar la etiqueta nutricional y moderar el consumo de azúcar.",
+challenge: "Reto: cuando compres un producto, revisa su etiqueta y compara el azúcar.",
+art: ["🦥", "🌼", "🦜"]
+},
+
+{
+q: "¿Qué combinación aporta fibra y ayuda al buen funcionamiento del sistema digestivo?",
+a: ["Frutas enteras, verduras y menestras", "Caramelos y gaseosa", "Solo carne", "Bebidas azucaradas"],
+correct: 0,
+why: "Las frutas enteras, verduras y menestras aportan fibra.",
+challenge: "Reto final: piensa en una menestra que se consuma en tu hogar.",
+art: ["🐆", "🌿", "🦋"]
+}
+
+];
+
+let current = 0;
+let points = 0;
+let lives = 3;
+let locked = false;
+
+function startGame() {
+
+  current = 0;
+  points = 0;
+  lives = 3;
+
+  document.getElementById("points").textContent = points;
+  document.getElementById("lives").textContent = lives;
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("end").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  showQuestion();
+}
+
+function showQuestion() {
+
+  locked = false;
+
+  const item = questions[current];
+
+  document.getElementById("number").textContent =
+    (current + 1) + "/5";
+
+  document.getElementById("challenge").textContent =
+    "✨ DESAFÍO " + (current + 1);
+
+  document.getElementById("bar").style.width =
+    (current / 5 * 100) + "%";
+
+  document.getElementById("question").textContent = item.q;
+
+  document.getElementById("feedback").textContent = "";
+
+  document.getElementById("miniChallenge").classList.add("hidden");
+
+  document.getElementById("next").classList.add("hidden");
+
+  // Imágenes decorativas que no revelan las respuestas.
+  document.getElementById("sceneMain").textContent = item.art[0];
+  document.getElementById("sceneSide1").textContent = item.art[1];
+  document.getElementById("sceneSide2").textContent = item.art[2];
+
+  const box = document.getElementById("answers");
+
+  box.innerHTML = "";
+
+  item.a.forEach((answer, i) => {
+
+    const b = document.createElement("button");
+
+    b.className = "answer";
+
+    b.textContent = String.fromCharCode(65 + i) + ". " + answer;
+
+    b.onclick = () => choose(i, b);
+
+    box.appendChild(b);
+
+  });
+
+}
+
+function choose(i, button) {
+
+  if (locked) return;
+
+  locked = true;
+
+  const item = questions[current];
+
+  const buttons = [...document.querySelectorAll(".answer")];
+
+  buttons.forEach((b, index) => {
+
+    b.disabled = true;
+
+    if (index === item.correct) {
+      b.classList.add("correct");
+    }
+
+  });
+
+  if (i === item.correct) {
+
+    points += 20;
+
+    document.getElementById("feedback").textContent =
+      "¡Correcto! +20 puntos. 🌟";
+
+  } else {
+
+    lives--;
+
+    document.getElementById("lives").textContent = lives;
+
+    button.classList.add("wrong");
+
+    document.getElementById("feedback").textContent =
+      "¡Casi! La respuesta correcta está marcada. 💚";
+
+  }
+
+  document.getElementById("points").textContent = points;
+
+  document.getElementById("miniChallenge").textContent =
+    item.challenge;
+
+  document.getElementById("miniChallenge").classList.remove("hidden");
+
+  document.getElementById("next").classList.remove("hidden");
+
+  document.getElementById("next").textContent =
+    (current === 4 || lives === 0)
+      ? "VER RESULTADO 🏆"
+      : "SIGUIENTE ➜";
+
+}
+
+function nextQuestion() {
+
+  if (current === 4 || lives === 0) {
+
+    finish();
+
+    return;
+
+  }
+
+  current++;
+
+  showQuestion();
+
+}
+
+function finish() {
+
+  document.getElementById("game").classList.add("hidden");
+
+  document.getElementById("end").classList.remove("hidden");
+
+  document.getElementById("bar").style.width = "100%";
+
+  let title, icon;
+
+  if (points >= 80) {
+
+    title = "¡Tesoro saludable conseguido!";
+    icon = "🏆";
+
+  } else if (points >= 40) {
+
+    title = "¡Buen trabajo, explorador!";
+    icon = "🥇";
+
+  } else {
+
+    title = "¡Sigue aprendiendo!";
+    icon = "🌱";
+
+  }
+
+  document.getElementById("endTitle").textContent = title;
+
+  document.getElementById("endIcon").textContent = icon;
+
+  document.getElementById("endText").textContent =
+    "Tu puntaje final fue " + points +
+    " puntos. Respondiste " + (points / 20) +
+    " de 5 preguntas correctamente. ¡Gracias por valorar la nutrición y los productos de Satipo!";
+
+}
+
+</script>
+
+</body>
+</html>
